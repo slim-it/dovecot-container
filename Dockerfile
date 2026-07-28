@@ -39,10 +39,7 @@ ARG WORMHOLE_VERSION
 LABEL org.opencontainers.image.title="dovecot container"
 LABEL org.opencontainers.image.description="Dovecot with the wormhole replication plugin, from the Ubuntu packages"
 LABEL org.opencontainers.image.source="https://github.com/slim-it/dovecot-container"
-# The tag is a single ordered version (see README), so these labels are where
-# a reader finds out what a given image actually contains. They carry the full
-# packaged versions, including the packaging revision the tag drops. The
-# standard image.version annotation is not used for either: CI overwrites it
+# Not org.opencontainers.image.version: CI overwrites that annotation
 # with the tag.
 LABEL nl.slim-it.dovecot.version="${DOVECOT_VERSION}"
 LABEL nl.slim-it.wormhole.version="${WORMHOLE_VERSION}"
