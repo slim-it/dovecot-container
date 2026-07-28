@@ -39,7 +39,10 @@ ARG WORMHOLE_VERSION
 LABEL org.opencontainers.image.title="dovecot container"
 LABEL org.opencontainers.image.description="Dovecot with the wormhole replication plugin, from the Ubuntu packages"
 LABEL org.opencontainers.image.source="https://github.com/slim-it/dovecot-container"
-LABEL org.opencontainers.image.version="${DOVECOT_VERSION}+wormhole${WORMHOLE_VERSION}"
+# The tag is a single ordered version (see README), so these labels are where
+# a reader finds out what a given image actually contains.
+LABEL org.opencontainers.image.version="${DOVECOT_VERSION}"
+LABEL nl.slim-it.wormhole.version="${WORMHOLE_VERSION}"
 
 # curl is the spam-training path: the IMAPSieve hooks post messages to
 # rspamd's controller rather than pulling in the whole rspamd server for its

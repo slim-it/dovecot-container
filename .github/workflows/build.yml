@@ -30,10 +30,12 @@ jobs:
           echo "version=$version" >> "$GITHUB_OUTPUT"
           echo "wormhole=$wormhole" >> "$GITHUB_OUTPUT"
           # Release tag: the upstream Dovecot version — epoch, dfsg suffix and
-          # packaging revision stripped — paired with the plugin version,
-          # because both determine what the image contains.
+          # packaging revision stripped — with the build number as a final
+          # component, so every build sorts after every earlier one no matter
+          # which of the two inputs moved. README explains why the plugin
+          # version is deliberately not in the tag.
           upstream="$(sed -E 's/^[0-9]+://; s/[+-].*$//' <<<"$version")"
-          echo "release=${upstream}-wormhole${wormhole}" >> "$GITHUB_OUTPUT"
+          echo "release=${upstream}.${{ github.run_number }}" >> "$GITHUB_OUTPUT"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4.2.0
