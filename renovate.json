@@ -1,0 +1,74 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "labels": [
+    "dependencies"
+  ],
+  "dependencyDashboard": false,
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "VERSION holds the packaged dovecot apt version, tracked against the Ubuntu archive of the release the base image pins. Every dovecot package in the image is installed at this version, including the dev headers the plugin is built against.",
+      "managerFilePatterns": [
+        "/^VERSION$/"
+      ],
+      "matchStrings": [
+        "(?<currentValue>.+)\\n"
+      ],
+      "depNameTemplate": "dovecot-core",
+      "datasourceTemplate": "deb",
+      "versioningTemplate": "deb"
+    },
+    {
+      "customType": "regex",
+      "description": "WORMHOLE_VERSION holds the plugin's release tag without the leading v, tracked against its Codeberg tags.",
+      "managerFilePatterns": [
+        "/^WORMHOLE_VERSION$/"
+      ],
+      "matchStrings": [
+        "(?<currentValue>.+)\\n"
+      ],
+      "depNameTemplate": "errror/wormhole",
+      "datasourceTemplate": "gitea-tags",
+      "registryUrlTemplate": "https://codeberg.org",
+      "extractVersionTemplate": "^v(?<version>.+)$"
+    },
+    {
+      "customType": "regex",
+      "description": "The suite codenames are the same Ubuntu release the FROM lines pin; tracked as one dependency and grouped so a release bump moves both files in one PR. That PR stays red until the follow-up dovecot VERSION update against the new suites lands.",
+      "managerFilePatterns": [
+        "/^renovate\\.json$/"
+      ],
+      "matchStrings": [
+        "suite=(?<currentValue>[a-z]+)(?:-updates|-security)?&"
+      ],
+      "depNameTemplate": "ubuntu",
+      "packageNameTemplate": "ubuntu",
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "ubuntu"
+    }
+  ],
+  "packageRules": [
+    {
+      "description": "Look dovecot up in the release, updates, and security suites",
+      "matchDepNames": [
+        "dovecot-core"
+      ],
+      "registryUrls": [
+        "https://archive.ubuntu.com/ubuntu?suite=resolute&components=main,universe&binaryArch=amd64",
+        "https://archive.ubuntu.com/ubuntu?suite=resolute-updates&components=main,universe&binaryArch=amd64",
+        "https://archive.ubuntu.com/ubuntu?suite=resolute-security&components=main,universe&binaryArch=amd64"
+      ]
+    },
+    {
+      "description": "Move the base image and the tracked suites in one PR",
+      "matchDepNames": [
+        "ubuntu"
+      ],
+      "versioning": "ubuntu",
+      "groupName": "ubuntu-release"
+    }
+  ]
+}
