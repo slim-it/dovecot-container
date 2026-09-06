@@ -4,11 +4,11 @@ ARG DOVECOT_VERSION
 ARG WORMHOLE_VERSION
 
 # wormhole is the third-party revival of the replicator Dovecot dropped. It is
-# not packaged anywhere, so it is built here against the headers of the exact
-# Dovecot the runtime stage installs: the plugin links against Dovecot's
-# internal ABI and a mismatch fails at load, not at build. dovecot-core is a
-# build dependency too, not just a runtime one — configure runs doveconf to
-# read the server's own build settings.
+# built here against the headers of the exact Dovecot the runtime stage
+# installs: the plugin links against Dovecot's internal ABI and a mismatch
+# fails at load, not at build. dovecot-core is a build dependency too, not just
+# a runtime one — configure runs doveconf to read the server's own build
+# settings.
 RUN test -n "${DOVECOT_VERSION}" && test -n "${WORMHOLE_VERSION}" \
     && apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
