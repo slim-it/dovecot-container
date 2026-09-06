@@ -4,11 +4,10 @@ Dovecot image built from the Ubuntu packages with the
 [wormhole](https://codeberg.org/errror/wormhole) replication plugin compiled in.
 
 Dovecot dropped its replicator; wormhole restores it, so a pair of servers can
-carry each user's mail to the other. It is packaged
-nowhere, so it is built here from a pinned git tag against `dovecot-dev` of the
-exact version the runtime stage installs — the plugin links against Dovecot's
-internal ABI, so a version skew between the two fails when Dovecot loads the
-plugin rather than when the image builds.
+carry each user's mail to the other. It is built here from a pinned git tag
+against `dovecot-dev` of the exact version the runtime stage installs — the
+plugin links against Dovecot's internal ABI, so a version skew between the two
+fails when Dovecot loads the plugin rather than when the image builds.
 
 Two files pin the build, each tracked by Renovate on its own:
 
@@ -47,6 +46,18 @@ every other, so a consumer is always offered the newest image that genuinely
 exists, and falling behind is impossible rather than invisible. The build
 number is the last component so that ordering holds no matter which input
 moved — a plugin-only change still produces a strictly higher tag.
+
+## Why the plugin is compiled rather than installed
+
+Upstream now ships `dovecot-wormhole` for Ubuntu resolute from its own apt
+repository, and the `main` component there is built against the distribution's
+Dovecot rather than the Dovecot CE packages, so it is the same pairing this
+image wants. Its dependency is an exact one — `dovecot-core (= <version>)`,
+the ABI pin above expressed in apt — and that is the reason not to use it:
+whenever Ubuntu ships a new `dovecot-core`, `VERSION` moves and no published
+`.deb` satisfies it until that repository's maintainer rebuilds. Compiling
+against `dovecot-dev` produces the matching plugin on the next build instead of
+waiting, and keeps the build's only upstream a git tag this repo already pins.
 
 The image carries no configuration; `dovecot.conf` and the Sieve scripts are
 mounted in by the consuming manifests. `curl` is present for the IMAPSieve
